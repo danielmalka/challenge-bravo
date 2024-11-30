@@ -70,20 +70,19 @@ func SyncCurrencies(userPass, host, schema, path string) {
 			}
 			continue
 		}
-		decimalSeparator, currency_rate := updateCurrencyFromConversionRate(code, rate)
 
-		if notZero(decimalSeparator) {
-			currency.DecimalSeparatorN = decimalSeparator
-		}
+		if currency.UpdatedAt.Before(lastUpdateDate) {
+			currency_rate := fmt.Sprintf("%v", rate)
 
-		if notEmpty(currency_rate) {
-			currency.CurrencyRate = currency_rate
-		}
+			if notEmpty(currency_rate) {
+				currency.CurrencyRate = currency_rate
+			}
 
-		currency.UpdatedAt = lastUpdateDate
+			currency.UpdatedAt = lastUpdateDate
 
-		if result := db.Save(&currency).Error; result != nil {
-			log.Println("error updating currency: ", result, currency)
+			if result := db.Save(&currency).Error; result != nil {
+				log.Println("error updating currency: ", result, currency)
+			}
 		}
 	}
 
@@ -91,39 +90,19 @@ func SyncCurrencies(userPass, host, schema, path string) {
 }
 
 func createNewCurrencyFromConversionRate(code string, rate float64) repository.Currency {
-	decimalSeparator := 0
 	backingCurrency := false
-	strRate := fmt.Sprintf("%f", rate)
-	numberSplited := strings.Split(strRate, ".")
-	if len(numberSplited[1]) > 0 {
-		decimalSeparator = len(numberSplited[1])
-	}
+	strRate := fmt.Sprintf("%v", rate)
 	if code == "USD" {
 		backingCurrency = true
 	}
 	return repository.Currency{
-		Code:              code,
-		Name:              code,
-		DecimalSeparatorN: uint(decimalSeparator),
-		BackingCurrency:   backingCurrency,
-		CurrencyRate:      strRate,
+		Code:            code,
+		Name:            code,
+		BackingCurrency: backingCurrency,
+		CurrencyRate:    strRate,
 	}
-}
-
-func updateCurrencyFromConversionRate(code string, rate float64) (uint, string) {
-	decimalSeparator := 0
-	strRate := fmt.Sprintf("%f", rate)
-	numberSplited := strings.Split(strRate, ".")
-	if len(numberSplited[1]) > 0 {
-		decimalSeparator = len(numberSplited[1])
-	}
-	return uint(decimalSeparator), strRate
 }
 
 func notEmpty(s string) bool {
 	return strings.TrimSpace(s) != ""
-}
-
-func notZero(u uint) bool {
-	return u != 0
 }

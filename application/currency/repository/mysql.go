@@ -14,15 +14,14 @@ func (Currency) TableName() string {
 
 // Currency Table
 type Currency struct {
-	ID                uint   `gorm:"primary_key"`
-	Code              string `gorm:"type:varchar(3);index"`
-	DecimalSeparatorN uint   `gorm:"type:integer"`
-	Name              string `gorm:"type:varchar(60);"`
-	BackingCurrency   bool   `gorm:"default:false"`
-	CurrencyRate      string `gorm:"type:varchar(20);"`
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-	DeletedAt         gorm.DeletedAt `gorm:"index"`
+	ID              uint   `gorm:"primary_key"`
+	Code            string `gorm:"type:varchar(3);index"`
+	Name            string `gorm:"type:varchar(60);"`
+	BackingCurrency bool   `gorm:"default:false"`
+	CurrencyRate    string `gorm:"type:varchar(20);"`
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	DeletedAt       gorm.DeletedAt `gorm:"index"`
 }
 
 // repository struct
@@ -61,28 +60,24 @@ func (r *repository) List() (*ResponseList, error) {
 	}, nil
 }
 
-func (r *repository) Create(code, name, currency_rate string, decimal_separator uint, backing_currency bool) (*Currency, error) {
+func (r *repository) Create(code, name, currency_rate string, backing_currency bool) (*Currency, error) {
 	newCurrency := Currency{
-		Code:              code,
-		DecimalSeparatorN: decimal_separator,
-		Name:              name,
-		BackingCurrency:   backing_currency,
-		CurrencyRate:      currency_rate,
+		Code:            code,
+		Name:            name,
+		BackingCurrency: backing_currency,
+		CurrencyRate:    currency_rate,
 	}
 	result := r.db.Create(&newCurrency)
 	return &newCurrency, result.Error
 }
 
-func (r *repository) Update(id, code, name, currency_rate string, decimal_separator uint, backing_currency bool) (*Currency, error) {
+func (r *repository) Update(id, code, name, currency_rate string, backing_currency bool) (*Currency, error) {
 	var existingCurrency Currency
 	if err := r.db.First(&existingCurrency, "id = ?", &id).Error; err != nil {
 		return nil, err
 	}
 	if notEmpty(code) {
 		existingCurrency.Code = code
-	}
-	if notZero(decimal_separator) {
-		existingCurrency.DecimalSeparatorN = decimal_separator
 	}
 	if notEmpty(name) {
 		existingCurrency.Name = name
@@ -105,11 +100,10 @@ func migrateAndSeed(db *gorm.DB) {
 	)
 	// Add USD to currency table
 	usd := Currency{
-		Code:              "USD",
-		Name:              "Dollar",
-		CurrencyRate:      "1",
-		DecimalSeparatorN: 2,
-		BackingCurrency:   true,
+		Code:            "USD",
+		Name:            "Dollar",
+		CurrencyRate:    "1",
+		BackingCurrency: true,
 	}
 	if db.Migrator().HasTable(&Currency{}) {
 		if err := db.First(&usd).Error; errors.Is(err, gorm.ErrRecordNotFound) {

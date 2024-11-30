@@ -35,13 +35,13 @@ func (s *Service) List() ([]*Currency, error) {
 
 // CreateCurrency creates a new currency
 func (s *Service) Create(c *CreateData) (*Currency, error) {
-	newCurrency, err := s.repo.Create(c.Code, c.Name, c.CurrencyRate, c.DecimalSeparatorN, c.BackingCurrency)
+	newCurrency, err := s.repo.Create(c.Code, c.Name, c.CurrencyRate, c.BackingCurrency)
 	return dbToEntity(newCurrency), err
 }
 
 // UpdateCurrency updates an existing currency
 func (s *Service) Update(c *UpdateData) (*Currency, error) {
-	existingCurrency, err := s.repo.Update(c.ID, c.Code, c.Name, c.CurrencyRate, c.DecimalSeparatorN, c.BackingCurrency)
+	existingCurrency, err := s.repo.Update(c.ID, c.Code, c.Name, c.CurrencyRate, c.BackingCurrency)
 	if err != nil {
 		return nil, err
 	}

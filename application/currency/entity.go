@@ -10,32 +10,29 @@ const dateLayout = "02/01/2006 15:04:05"
 
 // Currency - currency entity
 type Currency struct {
-	ID                string `json:"id"`
-	Code              string `json:"code"`
-	DecimalSeparatorN uint   `json:"decimal_separator"`
-	Name              string `json:"name"`
-	BackingCurrency   bool   `json:"backing_currency"`
-	CurrencyRate      string `json:"currency_rate"`
-	CreatedAt         string `json:"created_at"`
-	UpdatedAt         string `json:"updated_at"`
-	DeletedAt         string `json:"deleted_at"`
+	ID              string `json:"id"`
+	Code            string `json:"code"`
+	Name            string `json:"name"`
+	BackingCurrency bool   `json:"backing_currency"`
+	CurrencyRate    string `json:"currency_rate"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+	DeletedAt       string `json:"deleted_at"`
 }
 
 type CreateData struct {
-	Code              string `json:"code" binding:"required"`
-	DecimalSeparatorN uint   `json:"decimal_separator" binding:"required"`
-	Name              string `json:"name" binding:"required"`
-	CurrencyRate      string `json:"currency_rate" binding:"required"`
-	BackingCurrency   bool   `json:"backing_currency" default:"false"`
+	Code            string `json:"code" binding:"required"`
+	Name            string `json:"name" binding:"required"`
+	CurrencyRate    string `json:"currency_rate" binding:"required"`
+	BackingCurrency bool   `json:"backing_currency" default:"false"`
 }
 
 type UpdateData struct {
-	ID                string `json:"id"`
-	Code              string `json:"code" binding:"required"`
-	DecimalSeparatorN uint   `json:"decimal_separator" binding:"required"`
-	Name              string `json:"name" binding:"required"`
-	CurrencyRate      string `json:"currency_rate" binding:"required"`
-	BackingCurrency   bool   `json:"backing_currency" default:"false"`
+	ID              string `json:"id"`
+	Code            string `json:"code" binding:"required"`
+	Name            string `json:"name" binding:"required"`
+	CurrencyRate    string `json:"currency_rate" binding:"required"`
+	BackingCurrency bool   `json:"backing_currency" default:"false"`
 }
 
 type UseCase interface {
@@ -53,15 +50,14 @@ func dbToEntity(c *repository.Currency) *Currency {
 		deletedAt = c.DeletedAt.Time.Format(dateLayout)
 	}
 	return &Currency{
-		ID:                fmt.Sprintf("%d", c.ID),
-		Code:              c.Code,
-		DecimalSeparatorN: c.DecimalSeparatorN,
-		Name:              c.Name,
-		BackingCurrency:   c.BackingCurrency,
-		CurrencyRate:      c.CurrencyRate,
-		CreatedAt:         c.CreatedAt.Format(dateLayout),
-		UpdatedAt:         c.UpdatedAt.Format(dateLayout),
-		DeletedAt:         deletedAt,
+		ID:              fmt.Sprintf("%d", c.ID),
+		Code:            c.Code,
+		Name:            c.Name,
+		BackingCurrency: c.BackingCurrency,
+		CurrencyRate:    c.CurrencyRate,
+		CreatedAt:       c.CreatedAt.Format(dateLayout),
+		UpdatedAt:       c.UpdatedAt.Format(dateLayout),
+		DeletedAt:       deletedAt,
 	}
 }
 
