@@ -31,8 +31,14 @@ RUN apk add --no-cache tzdata \
 # Copy the binary from the build stage
 COPY --from=builder /app/challenge-bravo .
 
-# Copy the .env file
+# Copy the .env file ##DEV ONLY
 COPY .env .env
+
+# Copy the script to the container
+COPY docker/cronjob/run_sync.sh /usr/local/bin/run_sync.sh
+
+# Add the cronjob
+RUN echo "0 0 * * * /usr/local/bin/run_sync.sh" >> /etc/crontabs/root
 
 # Set the command to run the application
 CMD ["./challenge-bravo"]

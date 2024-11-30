@@ -20,8 +20,19 @@ func Handlers(config config.Config) *gin.Engine {
 	r.Use(customLogger())
 	r.Use(returnHeaders())
 
-	r.Handle("GET", "/", getHome())
-	r.Handle("GET", "/health", healthCheck(config))
+	r.GET("/", getHome())
+	r.GET("/health", healthCheck(config))
+
+	v1 := r.Group("/v1")
+	{
+		cg := v1.Group("/currency")
+		{
+			cg.GET("/", listCurrency(config))
+			cg.POST("/", createCurrency(config))
+			cg.PUT("/:id", updateCurrency(config))
+			cg.DELETE("/:id", deleteCurrency(config))
+		}
+	}
 	return r
 }
 

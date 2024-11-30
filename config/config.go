@@ -2,20 +2,22 @@ package config
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	AppStage string
-	Port     string
-	DBUser   string
-	DBPass   string
-	DBSchema string
-	DBHost   string
-	DBPort   string
+	AppStage            string
+	Port                string
+	DBUser              string
+	DBPass              string
+	DBSchema            string
+	DBHost              string
+	DBPort              string
+	ExchangeRateApiPath string
 }
 
 func ReadConfig() (c Config, err error) {
@@ -33,6 +35,7 @@ func ReadConfig() (c Config, err error) {
 		"DB_HOST",
 		"DB_PORT",
 		"DB_SCHEMA",
+		"EXCHANGE_RATE_API_URL",
 	}
 
 	missing := []string{}
@@ -48,15 +51,15 @@ func ReadConfig() (c Config, err error) {
 	}
 
 	c = Config{
-		AppStage: os.Getenv("ENVIRONMENT"),
-		Port:     os.Getenv("PORT"),
-		DBUser:   os.Getenv("DB_USER"),
-		DBPass:   os.Getenv("DB_PASSWORD"),
-		DBSchema: os.Getenv("DB_SCHEMA"),
-		DBHost:   os.Getenv("DB_HOST"),
-		DBPort:   os.Getenv("DB_PORT"),
+		AppStage:            os.Getenv("ENVIRONMENT"),
+		Port:                os.Getenv("PORT"),
+		DBUser:              os.Getenv("DB_USER"),
+		DBPass:              os.Getenv("DB_PASSWORD"),
+		DBSchema:            os.Getenv("DB_SCHEMA"),
+		DBHost:              os.Getenv("DB_HOST"),
+		DBPort:              os.Getenv("DB_PORT"),
+		ExchangeRateApiPath: os.Getenv("EXCHANGE_RATE_API_URL"),
 	}
 
 	return c, nil
-
 }
