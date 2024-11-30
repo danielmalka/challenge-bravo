@@ -12,6 +12,7 @@ type Repository interface {
 	Create(code, name, currency_rate string, backing_currency bool) (*Currency, error)
 	Update(id, code, name, currency_rate string, backing_currency bool) (*Currency, error)
 	Delete(id *string) error
+	GetByCodes(codes []string) (*ResponseList, error)
 }
 
 func notEmpty(s string) bool {

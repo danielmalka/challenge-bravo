@@ -32,6 +32,10 @@ func Handlers(config config.Config) *gin.Engine {
 			cg.PUT("/:id", updateCurrency(config))
 			cg.DELETE("/:id", deleteCurrency(config))
 		}
+		cg := v1.Group("/conversion")
+		{
+			cg.GET("/", doConversion(config))
+		}
 	}
 	return r
 }

@@ -41,6 +41,7 @@ type UseCase interface {
 	Create(f *CreateData) (*Currency, error)
 	Update(c *Currency) (*Currency, error)
 	Delete(id string) error
+	GetByCodes(code ...string) ([]*Currency, error)
 }
 
 // dbToEntity converts the DB Currency struct to this Currency struct

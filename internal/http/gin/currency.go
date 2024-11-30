@@ -92,6 +92,7 @@ func updateCurrency(config config.Config) gin.HandlerFunc {
 		if err := c.ShouldBindJSON(&request); err != nil {
 			log.Println("error binding JSON: ", err)
 			response.StatusCode = http.StatusBadRequest
+			// make a better response message
 			response.Message = gin.H{"error": err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 			return
