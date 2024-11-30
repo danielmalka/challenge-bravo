@@ -20,7 +20,6 @@ type CurrencyRate struct {
 type ConversionResponse struct {
 	Description string `json:"description"`
 	Amount      string `json:"amount"`
-	Formatted   string `json:"formatted"`
 }
 
 type UseCase interface {

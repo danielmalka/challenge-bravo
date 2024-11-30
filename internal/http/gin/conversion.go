@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/danielmalka/challenge-bravo/application/conversion"
 	"github.com/danielmalka/challenge-bravo/config"
@@ -21,7 +22,10 @@ func doConversion(config config.Config) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		var request conversion.ConversionData
-		if err := c.ShouldBindJSON(&request); err != nil {
+		fromQuery := c.Query("from")
+		toQuery := c.Query("to")
+		amountQuery := c.Query("amount")
+		if err := validateQueryString(fromQuery, toQuery, amountQuery); err != nil {
 			log.Println("error binding JSON: ", err)
 			response.StatusCode = http.StatusBadRequest
 			// make a better response message
@@ -29,6 +33,9 @@ func doConversion(config config.Config) gin.HandlerFunc {
 			c.JSON(response.StatusCode, response.Message)
 			return
 		}
+		request.From = fromQuery
+		request.To = toQuery
+		request.Amount = amountQuery
 
 		if request.From == request.To {
 			response.StatusCode = http.StatusBadRequest
@@ -37,9 +44,7 @@ func doConversion(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		codes := []string{request.From, request.To}
-
-		currencies, err := currencyService.GetByCodes(codes)
+		currencies, err := currencyService.GetByCodes(request.From, request.To)
 		if err != nil {
 			log.Println("error getting currencies: ", err)
 			response.StatusCode = http.StatusInternalServerError
@@ -73,4 +78,17 @@ func doConversion(config config.Config) gin.HandlerFunc {
 		response.StatusCode = http.StatusOK
 		c.JSON(response.StatusCode, cconversionResponse)
 	}
+}
+
+func validateQueryString(from, to, amount string) error {
+	if strings.TrimSpace(from) == "" {
+		return errors.New("from are required")
+	}
+	if strings.TrimSpace(to) == "" {
+		return errors.New("to are required")
+	}
+	if strings.TrimSpace(amount) == "" {
+		return errors.New("amount are required")
+	}
+	return nil
 }
