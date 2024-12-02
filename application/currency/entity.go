@@ -20,19 +20,23 @@ type Currency struct {
 	DeletedAt       string `json:"deleted_at"`
 }
 
+// CreateData currency info
+// @Description Request to Create a new Currency
 type CreateData struct {
-	Code            string `json:"code" binding:"required"`
-	Name            string `json:"name" binding:"required"`
-	CurrencyRate    string `json:"currency_rate" binding:"required"`
-	BackingCurrency bool   `json:"backing_currency" default:"false"`
+	Code            string `json:"code" binding:"required" swaggertype:"string"`
+	Name            string `json:"name" binding:"required" swaggertype:"string"`
+	CurrencyRate    string `json:"currency_rate" binding:"required" swaggertype:"string"`
+	BackingCurrency bool   `json:"backing_currency" default:"false" swaggertype:"boolean"`
 }
 
+// UpdateData currency info
+// @Description Request to Update a Currency
 type UpdateData struct {
-	ID              string `json:"id"`
-	Code            string `json:"code" binding:"required"`
-	Name            string `json:"name" binding:"required"`
-	CurrencyRate    string `json:"currency_rate" binding:"required"`
-	BackingCurrency bool   `json:"backing_currency" default:"false"`
+	ID              string `json:"id" swaggerignore:"true"`
+	Code            string `json:"code" binding:"required" swaggertype:"string"`
+	Name            string `json:"name" binding:"required" swaggertype:"string"`
+	CurrencyRate    string `json:"currency_rate" binding:"required" swaggertype:"string"`
+	BackingCurrency bool   `json:"backing_currency" default:"false" swaggertype:"boolean"`
 }
 
 type UseCase interface {

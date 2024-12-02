@@ -14,6 +14,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title Conversor de Moedas
+// @version 1.0
+// @description API para conversão de moedas
+// @termsOfService http://swagger.io/terms/
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8085
+// @BasePath /
 func main() {
 	c, err := config.ReadConfig()
 	if err != nil {
@@ -40,7 +48,7 @@ func initAPI(c config.Config) {
 	}
 }
 
-func initService(config config.Config) (error, gin.GinResponse, *currency.Service) {
+func initService(config config.Config) (error, gin.Message, *currency.Service) {
 	db, err, response := getDB(config)
 	if err != nil {
 		log.Println("error connecting to database: ", err)
@@ -50,8 +58,8 @@ func initService(config config.Config) (error, gin.GinResponse, *currency.Servic
 	return err, response, service
 }
 
-func getDB(c config.Config) (*gorm.DB, error, gin.GinResponse) {
-	errorMessage := gin.NewErrorGinResponse()
+func getDB(c config.Config) (*gorm.DB, error, gin.Message) {
+	errorMessage := gin.NewErrorMessage()
 	userPass := fmt.Sprintf("%s:%s", c.DBUser, c.DBPass)
 	host := fmt.Sprintf("%s:%s", c.DBHost, c.DBPort)
 	db, err := storage.ConnectMysql(userPass, c.DBSchema, host)

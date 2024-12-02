@@ -6,14 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GinResponse struct {
-	StatusCode int
-	Message    gin.H
+const ERROR_STR = "error"
+
+// Response gin info
+// @Description Standard response to errors
+type Message struct {
+	StatusCode int   `swaggerignore:"true"`
+	Message    gin.H `swaggertype:"object,string" example:"status:message"` // This is a json message
 }
 
-func NewErrorGinResponse() GinResponse {
-	return GinResponse{
+func NewErrorMessage() Message {
+	return Message{
 		StatusCode: http.StatusServiceUnavailable,
-		Message:    gin.H{"error": "internal error"},
+		Message:    gin.H{ERROR_STR: "internal error"},
 	}
 }

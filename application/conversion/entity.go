@@ -1,5 +1,7 @@
 package conversion
 
+// ConversionData conversion info
+// @Description Request to Convert a specified amount from one currency to another
 type ConversionData struct {
 	From   string `json:"from" binding:"required"`
 	To     string `json:"to" binding:"required"`
@@ -17,6 +19,8 @@ type CurrencyRate struct {
 	CurrencyRate string `json:"currency_rate"`
 }
 
+// ConversionResponse conversion info
+// @Description Response from conversion
 type ConversionResponse struct {
 	Description string `json:"description"`
 	Amount      string `json:"amount"`

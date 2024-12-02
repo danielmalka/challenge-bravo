@@ -15,7 +15,7 @@ func (Currency) TableName() string {
 // Currency Table
 type Currency struct {
 	ID              uint   `gorm:"primary_key"`
-	Code            string `gorm:"type:varchar(3);index"`
+	Code            string `gorm:"type:varchar(20);index"`
 	Name            string `gorm:"type:varchar(60);"`
 	BackingCurrency bool   `gorm:"default:false"`
 	CurrencyRate    string `gorm:"type:varchar(20);"`

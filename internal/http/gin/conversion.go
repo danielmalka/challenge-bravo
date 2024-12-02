@@ -11,7 +11,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func doConversion(currencyService *currency.Service, response GinResponse) gin.HandlerFunc {
+// doConversion godoc
+// @Summary Convert a amount
+// @Schemes
+// @Description Convert a specified amount from one currency to another using the latest exchange rates
+// @Tags currency
+// @Accept json
+// @Param from query string true "Currency code to convert from"
+// @Param to query string true "Currency code to convert to"
+// @Param amount query number true "Amount to be converted"
+// @Produce json
+// @Success 200 {object} conversion.ConversionResponse
+// @Failure 400 {object} gin.Message
+// @Failure 500 {object} gin.Message
+// @Router /v1/conversion [get]
+func doConversion(currencyService *currency.Service, response Message) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request conversion.ConversionData
 		fromQuery := c.Query("from")
@@ -21,7 +35,7 @@ func doConversion(currencyService *currency.Service, response GinResponse) gin.H
 			log.Println("error binding JSON: ", err)
 			response.StatusCode = http.StatusBadRequest
 			// make a better response message
-			response.Message = gin.H{"error": err.Error()}
+			response.Message = gin.H{ERROR_STR: err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 			return
 		}
@@ -31,7 +45,7 @@ func doConversion(currencyService *currency.Service, response GinResponse) gin.H
 
 		if request.From == request.To {
 			response.StatusCode = http.StatusBadRequest
-			response.Message = gin.H{"error": errors.New("from and to currencies must be different")}
+			response.Message = gin.H{ERROR_STR: "from and to currencies must be different"}
 			c.JSON(response.StatusCode, response.Message)
 			return
 		}
@@ -40,7 +54,7 @@ func doConversion(currencyService *currency.Service, response GinResponse) gin.H
 		if err != nil {
 			log.Println("error getting currencies: ", err)
 			response.StatusCode = http.StatusInternalServerError
-			response.Message = gin.H{"error": err.Error()}
+			response.Message = gin.H{ERROR_STR: err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 		}
 
@@ -58,16 +72,16 @@ func doConversion(currencyService *currency.Service, response GinResponse) gin.H
 			}
 		}
 		conversionService := conversion.NewService()
-		cconversionResponse, err := conversionService.ConvertMoney(&conversionValues)
+		conversionResponse, err := conversionService.ConvertMoney(&conversionValues)
 		if err != nil {
 			log.Println("error getting currencies: ", err)
 			response.StatusCode = http.StatusInternalServerError
-			response.Message = gin.H{"error": err.Error()}
+			response.Message = gin.H{ERROR_STR: err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 		}
 
 		response.StatusCode = http.StatusOK
-		c.JSON(response.StatusCode, cconversionResponse)
+		c.JSON(response.StatusCode, conversionResponse)
 	}
 }
 
