@@ -94,6 +94,26 @@ func (r *repository) Delete(id *string) error {
 	return r.db.Delete(&Currency{}, "id = ?", id).Error
 }
 
+func (r *repository) GetByCodes(codes []string) (*ResponseList, error) {
+	if len(codes) == 0 {
+		return nil, errors.New("no codes provided")
+	}
+
+	var currencies []Currency
+	if err := r.db.Where("code IN ?", codes).Find(&currencies).Error; err != nil {
+		return nil, err
+	}
+
+	currencyPointers := make([]*Currency, len(currencies))
+	for i := range currencies {
+		currencyPointers[i] = &currencies[i]
+	}
+
+	return &ResponseList{
+		Currencies: currencyPointers,
+	}, nil
+}
+
 func migrateAndSeed(db *gorm.DB) {
 	db.AutoMigrate(
 		&Currency{},

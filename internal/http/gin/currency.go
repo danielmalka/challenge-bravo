@@ -5,30 +5,10 @@ import (
 	"net/http"
 
 	"github.com/danielmalka/challenge-bravo/application/currency"
-	"github.com/danielmalka/challenge-bravo/config"
-	"github.com/danielmalka/challenge-bravo/pkg/storage"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func initService(config config.Config) (*gorm.DB, error, GinResponse, *currency.Service) {
-	db, err, response := getDB(config)
-	if err != nil {
-		log.Println("error connecting to database: ", err)
-		return nil, err, response, nil
-	}
-	service := currency.NewService(db)
-	return db, err, response, service
-}
-
-func listCurrency(config config.Config) gin.HandlerFunc {
-	db, err, response, service := initService(config)
-	if err != nil {
-		return func(c *gin.Context) {
-			c.JSON(response.StatusCode, response.Message)
-		}
-	}
-
+func listCurrency(service *currency.Service, response GinResponse) gin.HandlerFunc {
 	currencies, err := service.List()
 	if err != nil {
 		log.Println("error listing currencies: ", err)
@@ -39,21 +19,13 @@ func listCurrency(config config.Config) gin.HandlerFunc {
 		}
 	}
 
-	storage.Close(db)
 	return func(c *gin.Context) {
 		response.StatusCode = http.StatusOK
 		c.JSON(response.StatusCode, currencies)
 	}
 }
 
-func createCurrency(config config.Config) gin.HandlerFunc {
-	db, err, response, service := initService(config)
-	if err != nil {
-		return func(c *gin.Context) {
-			c.JSON(response.StatusCode, response.Message)
-		}
-	}
-
+func createCurrency(service *currency.Service, response GinResponse) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request currency.CreateData
 		if err := c.ShouldBindJSON(&request); err != nil {
@@ -73,25 +45,18 @@ func createCurrency(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		storage.Close(db)
 		response.StatusCode = http.StatusOK
 		c.JSON(response.StatusCode, currency)
 	}
 }
 
-func updateCurrency(config config.Config) gin.HandlerFunc {
-	db, err, response, service := initService(config)
-	if err != nil {
-		return func(c *gin.Context) {
-			c.JSON(response.StatusCode, response.Message)
-		}
-	}
-
+func updateCurrency(service *currency.Service, response GinResponse) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request currency.UpdateData
 		if err := c.ShouldBindJSON(&request); err != nil {
 			log.Println("error binding JSON: ", err)
 			response.StatusCode = http.StatusBadRequest
+			// make a better response message
 			response.Message = gin.H{"error": err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 			return
@@ -107,20 +72,12 @@ func updateCurrency(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		storage.Close(db)
 		response.StatusCode = http.StatusOK
 		c.JSON(response.StatusCode, currency)
 	}
 }
 
-func deleteCurrency(config config.Config) gin.HandlerFunc {
-	db, err, response, service := initService(config)
-	if err != nil {
-		return func(c *gin.Context) {
-			c.JSON(response.StatusCode, response.Message)
-		}
-	}
-
+func deleteCurrency(service *currency.Service, response GinResponse) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		currencyID := c.Param("id")
 
@@ -133,7 +90,6 @@ func deleteCurrency(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		storage.Close(db)
 		response.StatusCode = http.StatusOK
 		c.JSON(response.StatusCode, gin.H{})
 	}

@@ -86,7 +86,7 @@ func SyncCurrencies(userPass, host, schema, path string) {
 		}
 	}
 
-	defer storage.Close(db)
+	defer storage.Close(db, true)
 }
 
 func createNewCurrencyFromConversionRate(code string, rate float64) repository.Currency {
