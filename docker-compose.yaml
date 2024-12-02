@@ -1,15 +1,17 @@
 services:
   currency-api:
+    container_name: currency-api # Sets the container name
     build: .
     ports:
       - "8085:8080" # Maps container port 8085 to host port 8080
     depends_on:
-      - mysql # Ensures MySQL starts before the API
+      - database-currency # Ensures MySQL starts before the API
     networks:
       - app-network # Specifies a network for inter-service communication
 
-  mysql:
+  database-currency:
     image: mysql:8.4.3
+    container_name: database-currency # Sets the container name
     restart: always # Ensures availability and automatic restart on rebuilds or failures
     env_file:
       - .env # Loads variables for use in scripts
