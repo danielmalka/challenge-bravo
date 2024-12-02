@@ -50,7 +50,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "currency"
+                    "conversion"
                 ],
                 "summary": "Convert a amount",
                 "parameters": [

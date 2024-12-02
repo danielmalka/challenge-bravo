@@ -135,7 +135,7 @@ paths:
             $ref: '#/definitions/gin.Message'
       summary: Convert a amount
       tags:
-      - currency
+      - conversion
   /v1/currency:
     get:
       description: Show all currencies

@@ -14,9 +14,12 @@ Possível fazer conversões entre diferentes moedas
 - Clone o repositório
 - Copie o arquivo .env.example para .env com o comando ```cp .env.example .env```
 - Rode ```make prepare``` no terminal e aguarde a API subir na porta 8085
-- Pronto! Agora você pode acessar as rotas para utilização do projeto
+- Pronto! Agora você pode acessar o [Swagger](http://localhost:8085/swagger/index.htm) do projeto e verificar o resultado!
 
 ### API Conversão de Moedas
+
+
+Caso você tenha interesse em acessar a API por um Postman abaixo tem a descrição das rotas.
 
 ---
 
@@ -113,4 +116,3 @@ Possível fazer conversões entre diferentes moedas
 
 * Implementar o ```backing_currency``` e buscar a moeda padrão (só pode existir uma no sistema).
 * Adicionar testes automatizados
-* Implementar Frontend

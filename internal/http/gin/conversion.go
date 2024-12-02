@@ -15,7 +15,7 @@ import (
 // @Summary Convert a amount
 // @Schemes
 // @Description Convert a specified amount from one currency to another using the latest exchange rates
-// @Tags currency
+// @Tags conversion
 // @Accept json
 // @Param from query string true "Currency code to convert from"
 // @Param to query string true "Currency code to convert to"
