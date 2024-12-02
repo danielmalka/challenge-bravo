@@ -113,3 +113,4 @@ Possível fazer conversões entre diferentes moedas
 
 * Implementar o ```backing_currency``` e buscar a moeda padrão (só pode existir uma no sistema).
 * Adicionar testes automatizados
+* Implementar Frontend
