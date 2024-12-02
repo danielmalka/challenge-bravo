@@ -40,7 +40,11 @@ func ConnectMysql(userPass, schema, host string) (*gorm.DB, error) {
 }
 
 // Close -
-func Close(db *gorm.DB) {
+func Close(db *gorm.DB, now bool) {
 	sqlDB, _ := db.DB()
-	sqlDB.Close()
+	if now {
+		sqlDB.Close()
+		return
+	}
+	defer sqlDB.Close()
 }

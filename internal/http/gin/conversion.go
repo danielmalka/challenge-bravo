@@ -7,19 +7,11 @@ import (
 	"strings"
 
 	"github.com/danielmalka/challenge-bravo/application/conversion"
-	"github.com/danielmalka/challenge-bravo/config"
-	"github.com/danielmalka/challenge-bravo/pkg/storage"
+	"github.com/danielmalka/challenge-bravo/application/currency"
 	"github.com/gin-gonic/gin"
 )
 
-func doConversion(config config.Config) gin.HandlerFunc {
-	db, err, response, currencyService := initService(config)
-	if err != nil {
-		return func(c *gin.Context) {
-			c.JSON(response.StatusCode, response.Message)
-		}
-	}
-
+func doConversion(currencyService *currency.Service, response GinResponse) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request conversion.ConversionData
 		fromQuery := c.Query("from")
@@ -51,7 +43,6 @@ func doConversion(config config.Config) gin.HandlerFunc {
 			response.Message = gin.H{"error": err.Error()}
 			c.JSON(response.StatusCode, response.Message)
 		}
-		storage.Close(db)
 
 		conversionValues := conversion.ConversionValues{
 			Amount: request.Amount,

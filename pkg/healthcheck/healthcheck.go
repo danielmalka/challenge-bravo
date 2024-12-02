@@ -7,6 +7,6 @@ func HealthCheck(userPass, schema, host string) error {
 	if err != nil {
 		return err
 	}
-	storage.Close(db)
+	storage.Close(db, true)
 	return nil
 }

@@ -2,10 +2,10 @@
 .PHONY: run-api, create-api, shutdown, test test-external-provider test-application
 
 run-api:
-	docker compose up -d --build
+	docker compose up -d mysql && sleep 4 && docker compose up -d currency-api
 
 create-api:
-	docker compose build --no-cache --pull && make run-api
+	docker compose build --no-cache --pull
 
 shutdown:
 	docker compose down
