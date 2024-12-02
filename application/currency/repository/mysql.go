@@ -46,7 +46,7 @@ func (r *repository) GetByID(id *string) (*Currency, error) {
 
 func (r *repository) List() (*ResponseList, error) {
 	var currencies []Currency
-	if err := r.db.Find(&currencies, "deleted_at is NULL").Error; err != nil {
+	if err := r.db.Find(&currencies).Error; err != nil {
 		return nil, err
 	}
 
