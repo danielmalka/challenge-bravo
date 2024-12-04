@@ -7,6 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	BC_CODE          = "USD"
+	BC_NAME          = "Dollar"
+	BC_CURRENCY_RATE = "1"
+	BC_STATUS        = true
+)
+
 // TableName - force the table name
 func (Currency) TableName() string {
 	return "currency"
@@ -67,6 +74,7 @@ func (r *repository) Create(code, name, currency_rate string, backing_currency b
 		BackingCurrency: backing_currency,
 		CurrencyRate:    currency_rate,
 	}
+	removeBackingFromAll(backing_currency, r)
 	result := r.db.Create(&newCurrency)
 	return &newCurrency, result.Error
 }
@@ -86,8 +94,15 @@ func (r *repository) Update(id, code, name, currency_rate string, backing_curren
 		existingCurrency.CurrencyRate = currency_rate
 	}
 	existingCurrency.BackingCurrency = backing_currency
+	removeBackingFromAll(backing_currency, r)
 	result := r.db.Save(&existingCurrency)
 	return &existingCurrency, result.Error
+}
+
+func removeBackingFromAll(backing_currency bool, r *repository) {
+	if backing_currency {
+		r.db.Model(&Currency{}).Where("backing_currency = ?", true).Update("backing_currency", false)
+	}
 }
 
 func (r *repository) Delete(id *string) error {
@@ -95,6 +110,7 @@ func (r *repository) Delete(id *string) error {
 }
 
 func (r *repository) GetByCodes(codes []string) (*ResponseList, error) {
+	var bcExists bool
 	if len(codes) == 0 {
 		return nil, errors.New("no codes provided")
 	}
@@ -106,12 +122,37 @@ func (r *repository) GetByCodes(codes []string) (*ResponseList, error) {
 
 	currencyPointers := make([]*Currency, len(currencies))
 	for i := range currencies {
+		bcExists = bcExists || currencies[i].BackingCurrency
 		currencyPointers[i] = &currencies[i]
 	}
 
+	if !bcExists {
+		bc, err := getBackingCurrency(r)
+		if err == gorm.ErrRecordNotFound {
+			bc = firstCurrency()
+		}
+		currencyPointers = append(currencyPointers, bc)
+	}
 	return &ResponseList{
 		Currencies: currencyPointers,
 	}, nil
+}
+
+func getBackingCurrency(r *repository) (*Currency, error) {
+	var currency Currency
+	if err := r.db.First(&currency, "backing_currency = ?", true).Error; err != nil {
+		return nil, err
+	}
+	return &currency, nil
+}
+
+func firstCurrency() *Currency {
+	return &Currency{
+		Code:            BC_CODE,
+		Name:            BC_NAME,
+		CurrencyRate:    BC_CURRENCY_RATE,
+		BackingCurrency: BC_STATUS,
+	}
 }
 
 func migrateAndSeed(db *gorm.DB) {
@@ -119,15 +160,10 @@ func migrateAndSeed(db *gorm.DB) {
 		&Currency{},
 	)
 	// Add USD to currency table
-	usd := Currency{
-		Code:            "USD",
-		Name:            "Dollar",
-		CurrencyRate:    "1",
-		BackingCurrency: true,
-	}
+	bc := firstCurrency()
 	if db.Migrator().HasTable(&Currency{}) {
-		if err := db.First(&usd).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-			db.Create(&usd)
+		if err := db.First(bc).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+			db.Create(bc)
 		}
 	}
 }

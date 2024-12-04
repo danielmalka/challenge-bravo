@@ -15,7 +15,7 @@ func NewService() *Service {
 }
 
 // ConvertMoney converts money from one currency to another
-func (s *Service) ConvertMoney(c *ConversionValues) (*ConversionResponse, error) {
+func (s *Service) ConvertMoney(c *ConversionValues, bc string) (*ConversionResponse, error) {
 	amount, err := decimal.NewFromString(c.Amount)
 	if err != nil {
 		return nil, err
@@ -24,8 +24,7 @@ func (s *Service) ConvertMoney(c *ConversionValues) (*ConversionResponse, error)
 		return getConversionResponse(amount, c)
 	}
 
-	// make better validation from backing currency getting from database
-	if c.From.Code == money.USD {
+	if c.From.Code == bc {
 		amountTo := getAmountFromRate(c.To.CurrencyRate, amount)
 		return getConversionResponse(amountTo, c)
 	}

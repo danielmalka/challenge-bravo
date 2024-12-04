@@ -114,5 +114,4 @@ Caso você tenha interesse em acessar a API por um Postman abaixo tem a descriç
 
 ## Próximos Passos
 
-* Implementar o ```backing_currency``` e buscar a moeda padrão (só pode existir uma no sistema).
 * Adicionar testes automatizados

@@ -61,6 +61,7 @@ func doConversion(currencyService *currency.Service, response Message) gin.Handl
 		conversionValues := conversion.ConversionValues{
 			Amount: request.Amount,
 		}
+		var bc string
 		for _, currency := range currencies {
 			if currency.Code == request.From {
 				conversionValues.From.Code = currency.Code
@@ -70,9 +71,12 @@ func doConversion(currencyService *currency.Service, response Message) gin.Handl
 				conversionValues.To.Code = currency.Code
 				conversionValues.To.CurrencyRate = currency.CurrencyRate
 			}
+			if currency.BackingCurrency == true {
+				bc = currency.Code
+			}
 		}
 		conversionService := conversion.NewService()
-		conversionResponse, err := conversionService.ConvertMoney(&conversionValues)
+		conversionResponse, err := conversionService.ConvertMoney(&conversionValues, bc)
 		if err != nil {
 			log.Println("error getting currencies: ", err)
 			response.StatusCode = http.StatusInternalServerError

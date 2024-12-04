@@ -86,6 +86,7 @@ func createCurrency(service *currency.Service, response Message) gin.HandlerFunc
 // @Router /v1/currency/{id} [put]
 func updateCurrency(service *currency.Service, response Message) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Println("request: ", c.Request.URL.Query())
 		var request currency.UpdateData
 		if err := c.ShouldBindJSON(&request); err != nil {
 			log.Println("error binding JSON: ", err)
