@@ -2,7 +2,7 @@ package conversion
 
 import (
 	"fmt"
-	"log"
+	"regexp"
 
 	"github.com/Rhymond/go-money"
 	"github.com/shopspring/decimal"
@@ -29,11 +29,8 @@ func (s *Service) ConvertMoney(c *ConversionValues, bc string) (*ConversionRespo
 		return getConversionResponse(amountTo, c)
 	}
 
-	log.Println("step1: ", amount, c)
 	amountFromToUSD := getBackingCurrencyAmount(c.From.CurrencyRate, amount)
-	log.Println("step2: ", amountFromToUSD, c)
 	amountTo := getAmountFromRate(c.To.CurrencyRate, amountFromToUSD)
-	log.Println("step3: ", amountTo, c)
 	return getConversionResponse(amountTo, c)
 }
 
@@ -59,8 +56,13 @@ func getConversionResponse(amount decimal.Decimal, c *ConversionValues) (*Conver
 	currenciesMoney := money.New(0, c.To.Code)
 	toFraction := int32(currenciesMoney.Currency().Fraction)
 	amountRounded := amount.Round(toFraction)
+	strAmount := amountRounded.String()
+	re := regexp.MustCompile(`\.`)
+	if !re.MatchString(strAmount) {
+		strAmount = fmt.Sprintf("%s.%s", strAmount, "00")
+	}
 	return &ConversionResponse{
 		Description: fmt.Sprintf("Conversion from %s to %s", c.From.Code, c.To.Code),
-		Amount:      amountRounded.String(),
+		Amount:      strAmount,
 	}, nil
 }

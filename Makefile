@@ -23,8 +23,8 @@ test: test-external-provider test-application
 
 # Regra para rodar os testes no pacote external
 test-external-provider:
-	go test ./pkg/external/... -v
+	go test -count=1 ./pkg/external/... -v
 
 # Regra para rodar os testes no pacote application
 test-application:
-	go test ./application/... -v
+	go test -count=1 ./application/... -v
